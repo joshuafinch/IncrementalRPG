@@ -1,0 +1,3 @@
+export const MILLIS_IN_SECOND = 1000;
+export const TICKS_PER_SECOND = 20;
+export const MS_PER_TICK = MILLIS_IN_SECOND / TICKS_PER_SECOND;
