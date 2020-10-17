@@ -2,15 +2,18 @@
   <Game />
 </template>
 
-<script>
-import Game from "./components/Game";
+<script lang="ts">
+import Game from "components/Game";
+import { defineComponent } from "vue";
 
-export default {
-  name: "App",
+export default defineComponent({
+  setup() {
+    return {};
+  },
   components: {
     Game,
   },
-};
+});
 </script>
 
 <style>

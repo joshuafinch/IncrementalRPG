@@ -9,13 +9,15 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from "vue";
+
+export default defineComponent({
   name: "Woodcutting",
-  emits: ["status-changed"],
   props: {
-    woodCut: Number,
-    isCuttingWood: Boolean,
+    woodCut: { type: Number, required: true },
+    isCuttingWood: { type: Boolean, required: true },
   },
-};
+  emits: ["status-changed"],
+});
 </script>

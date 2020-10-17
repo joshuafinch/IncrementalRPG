@@ -1,6 +1,14 @@
 import { MILLIS_IN_SECOND, MS_PER_TICK } from "./constants";
 
 export default class GameLoop {
+  frameSamples: any[];
+  tickSamples: any[];
+  oldTimeStamp: number;
+  elapsedSeconds: number;
+  elapsedTicks: number;
+  isCuttingWood: boolean;
+  wood: number;
+
   constructor() {
     this.frameSamples = new Array(16).fill(0);
     this.tickSamples = new Array(16).fill(0);
@@ -12,7 +20,7 @@ export default class GameLoop {
     this.wood = 0;
   }
 
-  loop(timeStamp) {
+  loop(timeStamp: number) {
     requestAnimationFrame((timeStamp) => this.loop(timeStamp));
 
     this.oldTimeStamp = timeStamp;
@@ -40,12 +48,12 @@ export default class GameLoop {
     this.doRender();
   }
 
-  doSeconds(numSeconds) {
+  doSeconds(numSeconds: number) {
     this.shiftFrameSamples(numSeconds);
     this.shiftTickSamples(numSeconds);
   }
 
-  doTicks(numTicks) {
+  doTicks(numTicks: number) {
     this.tickSamples[0] = this.tickSamples[0] + numTicks;
 
     if (this.isCuttingWood) {
@@ -55,7 +63,7 @@ export default class GameLoop {
 
   doRender() {}
 
-  shiftFrameSamples(numSeconds) {
+  shiftFrameSamples(numSeconds: number) {
     if (numSeconds > this.frameSamples.length) {
       this.frameSamples.fill(0);
       return;
@@ -67,7 +75,7 @@ export default class GameLoop {
     }
   }
 
-  shiftTickSamples(numSeconds) {
+  shiftTickSamples(numSeconds: number) {
     if (numSeconds > this.tickSamples.length) {
       this.tickSamples.fill(0);
       return;
@@ -79,7 +87,7 @@ export default class GameLoop {
     }
   }
 
-  averageFrames(numSamples, offset) {
+  averageFrames(numSamples: number, offset: number) {
     let frames = this.frameSamples
       .slice(offset, offset + numSamples)
       .filter((v) => v > 0);
@@ -87,7 +95,7 @@ export default class GameLoop {
     return frames.reduce((s, v) => s + v) / frames.length;
   }
 
-  averageTicks(numSamples, offset) {
+  averageTicks(numSamples: number, offset: number) {
     let ticks = this.tickSamples
       .slice(offset, offset + numSamples)
       .filter((v) => v > 0);

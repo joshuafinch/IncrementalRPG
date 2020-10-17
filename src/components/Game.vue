@@ -25,31 +25,37 @@
   </div>
 </template>
 
-<script>
-import PerformanceBreakdown from "./PerformanceBreakdown";
-import Woodcutting from "./Woodcutting";
-import GameLoop from "../gameLoop";
+<script lang="ts">
+import PerformanceBreakdown from "components/PerformanceBreakdown";
+import Woodcutting from "components/Woodcutting";
+import GameLoop from "@/gameLoop";
+import { defineComponent, onMounted, ref, reactive } from "vue";
 
-export default {
+export default defineComponent({
   name: "Game",
   components: {
-    Woodcutting,
     PerformanceBreakdown,
+    Woodcutting,
   },
-  mounted() {
-    this.gameLoop.loop(0);
-  },
-  data() {
+  setup() {
+    const gameLoop = reactive(new GameLoop());
+    var showFrameBreakdown = ref(false);
+    var showTickBreakdown = ref(false);
+
+    onMounted(() => {
+      gameLoop.loop(0);
+    });
+
+    function onStatusChanged(isCuttingWood: boolean) {
+      gameLoop.isCuttingWood = isCuttingWood;
+    }
+
     return {
-      showFrameBreakdown: false,
-      showTickBreakdown: false,
-      gameLoop: new GameLoop(),
+      showFrameBreakdown,
+      showTickBreakdown,
+      gameLoop,
+      onStatusChanged,
     };
   },
-  methods: {
-    onStatusChanged: function(isCuttingWood) {
-      this.gameLoop.isCuttingWood = isCuttingWood;
-    },
-  },
-};
+});
 </script>
