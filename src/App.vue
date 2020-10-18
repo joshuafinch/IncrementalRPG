@@ -7,8 +7,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-export default defineComponent({});
+import { defineComponent, onMounted, onUnmounted, provide } from "vue";
+import GameLoop from "@/gameLoop";
+
+export default defineComponent({
+  setup() {
+    const gameLoop = new GameLoop();
+
+    onMounted(() => {
+      gameLoop.start();
+    });
+
+    onUnmounted(() => {
+      gameLoop.stop();
+    });
+
+    provide<GameLoop>("gameLoop", gameLoop);
+  },
+});
 </script>
 
 <style>

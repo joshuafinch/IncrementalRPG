@@ -6,7 +6,7 @@
     <p>Last 15s: {{ last15 }}</p>
     <ol>
       <li v-for="(item, index) in samples" :key="index">
-        {{ index }} seconds ago, frames: {{ item }}
+        {{ index }} seconds ago: {{ item }}
       </li>
     </ol>
   </div>

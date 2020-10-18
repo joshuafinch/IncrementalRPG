@@ -6,11 +6,12 @@
 
 <script lang="ts">
 import Game from "components/Game";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "Home",
   components: {
     Game,
   },
-};
+});
 </script>
