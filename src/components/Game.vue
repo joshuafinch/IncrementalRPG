@@ -1,10 +1,6 @@
 <template>
   <div>
-    <Woodcutting
-      @status-changed="onStatusChanged"
-      :woodCut="gameLoop.wood"
-      :isCuttingWood="gameLoop.isCuttingWood"
-    />
+    <Woodcutting />
 
     <PerformanceBreakdown
       v-if="showFrameBreakdown"
@@ -39,22 +35,17 @@ export default defineComponent({
   },
   setup() {
     const gameLoop = reactive(new GameLoop());
-    var showFrameBreakdown = ref(false);
-    var showTickBreakdown = ref(false);
+    let showFrameBreakdown = ref(false);
+    let showTickBreakdown = ref(false);
 
     onMounted(() => {
       gameLoop.loop(0);
     });
 
-    function onStatusChanged(isCuttingWood: boolean) {
-      gameLoop.isCuttingWood = isCuttingWood;
-    }
-
     return {
       showFrameBreakdown,
       showTickBreakdown,
       gameLoop,
-      onStatusChanged,
     };
   },
 });

@@ -1,13 +1,12 @@
 import { MILLIS_IN_SECOND, MS_PER_TICK } from "./constants";
+import store from "@/store";
 
 export default class GameLoop {
-  frameSamples: any[];
-  tickSamples: any[];
-  oldTimeStamp: number;
-  elapsedSeconds: number;
-  elapsedTicks: number;
-  isCuttingWood: boolean;
-  wood: number;
+  private frameSamples: any[];
+  private tickSamples: any[];
+  private oldTimeStamp: number;
+  private elapsedSeconds: number;
+  private elapsedTicks: number;
 
   constructor() {
     this.frameSamples = new Array(16).fill(0);
@@ -15,9 +14,6 @@ export default class GameLoop {
     this.oldTimeStamp = 0;
     this.elapsedSeconds = 0;
     this.elapsedTicks = 0;
-
-    this.isCuttingWood = false;
-    this.wood = 0;
   }
 
   loop(timeStamp: number) {
@@ -48,22 +44,25 @@ export default class GameLoop {
     this.doRender();
   }
 
-  doSeconds(numSeconds: number) {
+  private doSeconds(numSeconds: number) {
     this.shiftFrameSamples(numSeconds);
     this.shiftTickSamples(numSeconds);
   }
 
-  doTicks(numTicks: number) {
+  private doTicks(numTicks: number) {
     this.tickSamples[0] = this.tickSamples[0] + numTicks;
 
-    if (this.isCuttingWood) {
-      this.wood += numTicks;
+    if (store.getters.isCuttingWood) {
+      store.dispatch("incrementInventoryItemBy", {
+        item: "wood",
+        amount: numTicks,
+      });
     }
   }
 
-  doRender() {}
+  private doRender() {}
 
-  shiftFrameSamples(numSeconds: number) {
+  private shiftFrameSamples(numSeconds: number) {
     if (numSeconds > this.frameSamples.length) {
       this.frameSamples.fill(0);
       return;
@@ -75,7 +74,7 @@ export default class GameLoop {
     }
   }
 
-  shiftTickSamples(numSeconds: number) {
+  private shiftTickSamples(numSeconds: number) {
     if (numSeconds > this.tickSamples.length) {
       this.tickSamples.fill(0);
       return;
