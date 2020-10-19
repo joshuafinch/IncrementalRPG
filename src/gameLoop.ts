@@ -1,4 +1,4 @@
-import { MILLIS_IN_SECOND, MS_PER_TICK } from "./constants";
+import { MILLIS_IN_SECOND, MS_PER_TICK, SAMPLE_BUFFER_SIZE } from "./constants";
 import store from "@/store";
 import { Ref, ref } from "vue";
 
@@ -8,16 +8,18 @@ export default class GameLoop {
   oldTimeStamp: Ref<number>;
   elapsedSeconds: Ref<number>;
   elapsedTicks: Ref<number>;
-  raf?: number;
-  id: number;
+  private raf?: number;
+  private id: number;
+  private static latestId: number = 0;
+  static readonly instance: GameLoop = new GameLoop();
 
   constructor() {
-    this.frameSamples = ref(new Array(16).fill(0));
-    this.tickSamples = ref(new Array(16).fill(0));
+    this.frameSamples = ref(new Array(SAMPLE_BUFFER_SIZE).fill(0));
+    this.tickSamples = ref(new Array(SAMPLE_BUFFER_SIZE).fill(0));
     this.oldTimeStamp = ref(0);
     this.elapsedSeconds = ref(0);
     this.elapsedTicks = ref(0);
-    this.id = performance.now();
+    this.id = GameLoop.latestId++;
   }
 
   loop(timeStamp: number) {
@@ -49,16 +51,23 @@ export default class GameLoop {
 
   start() {
     const startTime = performance.now();
-    console.log(`Starting GameLoop ${this.id} at ${startTime}`);
+    console.info(`Starting GameLoop ${this.id} at ${startTime}`);
+
+    this.oldTimeStamp.value = startTime;
+    this.elapsedSeconds.value = startTime / MILLIS_IN_SECOND;
+    this.elapsedTicks.value = Math.round(startTime / MS_PER_TICK);
+    this.frameSamples.value.fill(0);
+    this.tickSamples.value.fill(0);
+
     this.loop(startTime);
   }
 
   stop() {
     if (this.raf) {
-      console.log(`Stopping GameLoop ${this.id} at ${performance.now()}`);
+      console.info(`Stopping GameLoop ${this.id} at ${performance.now()}`);
       cancelAnimationFrame(this.raf);
     } else {
-      console.log(
+      console.info(
         `Attempted to stop GameLoop ${
           this.id
         }, but nothing to stop at ${performance.now()}`
@@ -67,8 +76,20 @@ export default class GameLoop {
   }
 
   doSeconds(numSeconds: number) {
-    this.shiftFrameSamples(numSeconds);
-    this.shiftTickSamples(numSeconds);
+    const shiftSamples = (numSeconds: number, samples: Ref<number[]>) => {
+      if (numSeconds > samples.value.length) {
+        samples.value.fill(0);
+        return;
+      }
+
+      for (var i = 0; i < numSeconds; i++) {
+        samples.value.pop();
+        samples.value.unshift(0);
+      }
+    };
+
+    shiftSamples(numSeconds, this.frameSamples);
+    shiftSamples(numSeconds, this.tickSamples);
   }
 
   doTicks(numTicks: number) {
@@ -80,29 +101,8 @@ export default class GameLoop {
         amount: numTicks,
       });
     }
-  }
 
-  shiftFrameSamples(numSeconds: number) {
-    if (numSeconds > this.frameSamples.value.length) {
-      this.frameSamples.value.fill(0);
-      return;
-    }
-
-    for (var i = 0; i < numSeconds; i++) {
-      this.frameSamples.value.pop();
-      this.frameSamples.value.unshift(0);
-    }
-  }
-
-  shiftTickSamples(numSeconds: number) {
-    if (numSeconds > this.tickSamples.value.length) {
-      this.tickSamples.value.fill(0);
-      return;
-    }
-
-    for (var i = 0; i < numSeconds; i++) {
-      this.tickSamples.value.pop();
-      this.tickSamples.value.unshift(0);
-    }
+    // 1 wood every 3 seconds
+    // 20 tps = 60ticks required
   }
 }

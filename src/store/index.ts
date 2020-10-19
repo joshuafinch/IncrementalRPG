@@ -1,4 +1,4 @@
-import { createStore, Getter, GetterTree } from "vuex";
+import { createStore } from "vuex";
 
 export interface IInventoryState {
   [productId: string]: number;

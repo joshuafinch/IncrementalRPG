@@ -1,37 +1,35 @@
 <template>
   <div>
-    <Woodcutting />
-
-    <PerformanceBreakdown
-      v-if="showFrameBreakdown"
-      :elapsed="elapsedSeconds"
-      :last5="last5frames"
-      :last10="last10frames"
-      :last15="last15frames"
-      :samples="frameSamples"
-    />
-    <PerformanceBreakdown
-      v-if="showTickBreakdown"
-      :elapsed="elapsedTicks"
-      :last5="last5ticks"
-      :last10="last10ticks"
-      :last15="last15ticks"
-      :samples="tickSamples"
-    />
+    <h1>Performance</h1>
+    <div class="Performance__wrapper">
+      <PerformanceBreakdown
+        name="FPS"
+        :elapsed="elapsedSeconds"
+        :last5="last5frames"
+        :last10="last10frames"
+        :last15="last15frames"
+        :samples="frameSamples"
+      />
+      <PerformanceBreakdown
+        name="TPS"
+        :elapsed="elapsedTicks"
+        :last5="last5ticks"
+        :last10="last10ticks"
+        :last15="last15ticks"
+        :samples="tickSamples"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import PerformanceBreakdown from "components/PerformanceBreakdown";
-import Woodcutting from "components/Woodcutting";
+import PerformanceBreakdown from "components/game/PerformanceBreakdown";
 import GameLoop from "@/gameLoop";
 import { defineComponent, ref, computed, Ref, unref, inject } from "vue";
 
 export default defineComponent({
-  name: "Game",
   components: {
     PerformanceBreakdown,
-    Woodcutting,
   },
   setup() {
     const gameLoop = inject<GameLoop>("gameLoop");
@@ -52,12 +50,10 @@ export default defineComponent({
     return {
       showFrameBreakdown: ref(true),
       showTickBreakdown: ref(true),
-      elapsedTicks: gameLoop.elapsedTicks,
       last5ticks: computed(() => average(5, 1, gameLoop.tickSamples)),
       last10ticks: computed(() => average(10, 1, gameLoop.tickSamples)),
       last15ticks: computed(() => average(15, 1, gameLoop.tickSamples)),
       tickSamples: gameLoop.tickSamples,
-      elapsedSeconds: gameLoop.elapsedSeconds,
       last5frames: computed(() => average(5, 1, gameLoop.frameSamples)),
       last10frames: computed(() => average(10, 1, gameLoop.frameSamples)),
       last15frames: computed(() => average(15, 1, gameLoop.frameSamples)),
@@ -66,3 +62,14 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.Performance__wrapper {
+  display: flex;
+  flex-flow: row wrap;
+}
+.Performance__wrapper > * {
+  flex: 1;
+  align-self: flex-start;
+}
+</style>

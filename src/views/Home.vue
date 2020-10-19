@@ -1,17 +1,19 @@
 <template>
   <div class="home">
-    <Game />
+    <h1>Home</h1>
+    <div class="nav">
+      <router-link class="item" to="/about">About</router-link>
+      <router-link class="item" to="/game">Game</router-link>
+    </div>
   </div>
 </template>
 
-<script lang="ts">
-import Game from "components/Game";
-import { defineComponent } from "vue";
+<style scoped>
+.nav {
+  flex-wrap: wrap;
+}
 
-export default defineComponent({
-  name: "Home",
-  components: {
-    Game,
-  },
-});
-</script>
+.item {
+  padding: 0 10px;
+}
+</style>

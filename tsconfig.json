@@ -17,6 +17,7 @@
       "@/*": ["./src/*"],
       "src/*": ["./src/*"],
       "components/*": ["./src/components/*.vue"],
+      "views/*": ["./src/views/*.vue"],
       "assets/*": ["./src/assets/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
