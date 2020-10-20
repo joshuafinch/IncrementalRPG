@@ -1,4 +1,14 @@
-import { MILLIS_IN_SECOND, MS_PER_TICK, SAMPLE_BUFFER_SIZE } from "./constants";
+import {
+  ACTION_GATHER_STONE,
+  ACTION_GATHER_WOOD,
+  MILLIS_IN_SECOND,
+  MS_PER_TICK,
+  RESOURCE_ID_STONE,
+  RESOURCE_ID_WOOD,
+  SAMPLE_BUFFER_SIZE,
+  TICKS_PER_STONE,
+  TICKS_PER_WOOD,
+} from "./constants";
 import store from "@/store";
 import { Ref, ref } from "vue";
 
@@ -95,14 +105,20 @@ export default class GameLoop {
   doTicks(numTicks: number) {
     this.tickSamples.value[0] = this.tickSamples.value[0] + numTicks;
 
-    if (store.getters.isCuttingWood) {
-      store.dispatch("incrementInventoryItemBy", {
-        item: "wood",
+    if (store.getters[`IS_${ACTION_GATHER_WOOD}`]) {
+      store.dispatch("incrementProgressTowardsBy", {
+        item: RESOURCE_ID_WOOD,
         amount: numTicks,
+        progressPerItem: TICKS_PER_WOOD,
       });
     }
 
-    // 1 wood every 3 seconds
-    // 20 tps = 60ticks required
+    if (store.getters[`IS_${ACTION_GATHER_STONE}`]) {
+      store.dispatch("incrementProgressTowardsBy", {
+        item: RESOURCE_ID_STONE,
+        amount: numTicks,
+        progressPerItem: TICKS_PER_STONE,
+      });
+    }
   }
 }

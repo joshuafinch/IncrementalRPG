@@ -10,9 +10,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "game" */ "views/Game"),
     children: [
       {
-        path: "woodcutting",
+        path: "gathering",
         component: () =>
-          import(/* webpackChunkName: "game" */ "views/Woodcutting"),
+          import(/* webpackChunkName: "game" */ "views/Gathering"),
       },
       {
         path: "performance",

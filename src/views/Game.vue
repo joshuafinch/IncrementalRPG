@@ -47,8 +47,8 @@ export default defineComponent({
           route: "/game/combat",
         },
         {
-          name: "Woodcutting",
-          route: "/game/woodcutting",
+          name: "Gathering",
+          route: "/game/gathering",
         },
         {
           name: "Performance",
