@@ -20,7 +20,6 @@ export default defineComponent({
   name: "PerformanceBreakdown",
   props: {
     name: String,
-    elapsed: Number,
     last5: Number,
     last10: Number,
     last15: Number,

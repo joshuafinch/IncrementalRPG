@@ -32,33 +32,6 @@ export default class GameLoop {
     this.id = GameLoop.latestId++;
   }
 
-  loop(timeStamp: number) {
-    this.raf = requestAnimationFrame((t) => this.loop(t));
-
-    this.oldTimeStamp.value = timeStamp;
-
-    // Measure a new frame
-    this.frameSamples.value[0] = this.frameSamples.value[0] + 1;
-
-    // Process full elapsed seconds passed since last loop
-    let newElapsedSeconds = Math.round(
-      this.oldTimeStamp.value / MILLIS_IN_SECOND
-    );
-    let secondsToProcess = newElapsedSeconds - this.elapsedSeconds.value;
-    if (secondsToProcess > 0) {
-      this.doSeconds(secondsToProcess);
-    }
-    this.elapsedSeconds.value = newElapsedSeconds;
-
-    // Process full elapsed ticks passed since last loop
-    let newElapsedTicks = Math.round(this.oldTimeStamp.value / MS_PER_TICK);
-    let ticksToProcess = newElapsedTicks - this.elapsedTicks.value;
-    if (ticksToProcess > 0) {
-      this.doTicks(ticksToProcess);
-    }
-    this.elapsedTicks.value = newElapsedTicks;
-  }
-
   start() {
     const startTime = performance.now();
     console.info(`Starting GameLoop ${this.id} at ${startTime}`);
@@ -85,7 +58,34 @@ export default class GameLoop {
     }
   }
 
-  doSeconds(numSeconds: number) {
+  private loop(timeStamp: number) {
+    this.raf = requestAnimationFrame((t) => this.loop(t));
+
+    this.oldTimeStamp.value = timeStamp;
+
+    // Measure a new frame
+    this.frameSamples.value[0] = this.frameSamples.value[0] + 1;
+
+    // Process full elapsed seconds passed since last loop
+    let newElapsedSeconds = Math.round(
+      this.oldTimeStamp.value / MILLIS_IN_SECOND
+    );
+    let secondsToProcess = newElapsedSeconds - this.elapsedSeconds.value;
+    if (secondsToProcess > 0) {
+      this.doSeconds(secondsToProcess);
+    }
+    this.elapsedSeconds.value = newElapsedSeconds;
+
+    // Process full elapsed ticks passed since last loop
+    let newElapsedTicks = Math.round(this.oldTimeStamp.value / MS_PER_TICK);
+    let ticksToProcess = newElapsedTicks - this.elapsedTicks.value;
+    if (ticksToProcess > 0) {
+      this.doTicks(ticksToProcess);
+    }
+    this.elapsedTicks.value = newElapsedTicks;
+  }
+
+  private doSeconds(numSeconds: number) {
     const shiftSamples = (numSeconds: number, samples: Ref<number[]>) => {
       if (numSeconds > samples.value.length) {
         samples.value.fill(0);
@@ -102,7 +102,7 @@ export default class GameLoop {
     shiftSamples(numSeconds, this.tickSamples);
   }
 
-  doTicks(numTicks: number) {
+  private doTicks(numTicks: number) {
     this.tickSamples.value[0] = this.tickSamples.value[0] + numTicks;
 
     if (store.getters[`IS_${ACTION_GATHER_WOOD}`]) {

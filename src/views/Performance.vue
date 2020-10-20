@@ -4,7 +4,6 @@
     <div class="Performance__wrapper">
       <PerformanceBreakdown
         name="FPS"
-        :elapsed="elapsedSeconds"
         :last5="last5frames"
         :last10="last10frames"
         :last15="last15frames"
@@ -12,7 +11,6 @@
       />
       <PerformanceBreakdown
         name="TPS"
-        :elapsed="elapsedTicks"
         :last5="last5ticks"
         :last10="last10ticks"
         :last15="last15ticks"
@@ -25,7 +23,7 @@
 <script lang="ts">
 import PerformanceBreakdown from "components/game/PerformanceBreakdown";
 import GameLoop from "@/gameLoop";
-import { defineComponent, ref, computed, Ref, unref, inject } from "vue";
+import { defineComponent, computed, Ref, unref, inject } from "vue";
 
 export default defineComponent({
   components: {
@@ -48,8 +46,6 @@ export default defineComponent({
     };
 
     return {
-      showFrameBreakdown: ref(true),
-      showTickBreakdown: ref(true),
       last5ticks: computed(() => average(5, 1, gameLoop.tickSamples)),
       last10ticks: computed(() => average(10, 1, gameLoop.tickSamples)),
       last15ticks: computed(() => average(15, 1, gameLoop.tickSamples)),
